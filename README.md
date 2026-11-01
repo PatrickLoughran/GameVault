@@ -8,7 +8,7 @@ GameVault brings its game logic and interfaces together in one React application
 
 ## Features
 
-- **54 playable minigames** across arcade, puzzle, card, word, reflex, and strategy categories.
+- **54+ playable minigames** across arcade, puzzle, card, word, reflex, and strategy categories.
 - **Self-contained game components** built with JavaScript and React.
 - **Shared arcade interface** for navigation, pause controls, and score history.
 - **Browser-based play** without requiring a separate game engine.

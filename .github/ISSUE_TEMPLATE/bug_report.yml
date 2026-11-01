@@ -2,40 +2,56 @@ name: Bug report
 description: Report a reproducible problem in GameVault
 title: "bug: "
 labels: ["bug"]
+
 body:
   - type: markdown
     attributes:
-      value: "Thanks for helping improve GameVault. Please avoid posting private or security-sensitive information."
-  - type: textarea
-    id: summary
+      value: |
+        Thanks for helping improve GameVault.
+        Please avoid sharing private or security-sensitive information.
+
+  - type: input
+    id: game
     attributes:
-      label: What happened?
-      description: Describe the unexpected behavior.
-      placeholder: What did you see?
+      label: Game name
+      description: Which game has the problem?
+      placeholder: e.g. Snake Game
     validations:
       required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and device
+      description: Mention your browser and device.
+      placeholder: e.g. Chrome 155 on Windows 11
+    validations:
+      required: true
+
   - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce
-      description: Include the steps needed to reproduce the problem.
+      description: Explain how to reproduce the problem.
       placeholder: |
-        1. Open ...
-        2. Select ...
-        3. Observe ...
+        1. Open the game.
+        2. Start playing.
+        3. Observe the issue.
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
+      label: Expected result
       description: What did you expect to happen?
     validations:
       required: true
-  - type: input
-    id: browser
+
+  - type: textarea
+    id: actual
     attributes:
-      label: Browser and version
-      placeholder: e.g. Chrome 155
+      label: Actual result
+      description: What actually happened?
     validations:
-      required: false
+      required: true

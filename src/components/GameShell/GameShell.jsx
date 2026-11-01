@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useRef } from "r
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { theme } from "../../styles/theme";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { bestScoreKey, toSafeBest } from "../../utils/bestScore";
 
 const GameShellContext = createContext(null);
 
@@ -16,73 +18,25 @@ export const useGameShell = () => {
 export default function GameShell({ title, children }) {
   const [muted, setMuted] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [bestScore, setBestScore] = useState(0);
-  
-  const navigate = useNavigate();
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [storedBest, setBest] = useLocalStorage(bestScoreKey(title), 0);
+  const best = toSafeBest(storedBest);
 
-  const pauseBtnRef = useRef(null);
-  const resumeBtnRef = useRef(null);
-  const restartBtnRef = useRef(null);
-  const modalRef = useRef(null);
-  const triggerRef = useRef(null);
+  const handleSetScore = useCallback(
+    (val) => {
+      const newScore = typeof val === "function" ? val(score) : val;
+      setScore(newScore);
+      if (newScore > best) setBest(newScore);
+    },
+    [score, best, setBest],
+  );
 
-  // Update best score automatically when score increases
-  useEffect(() => {
-    if (score > bestScore) {
-      setBestScore(score);
-    }
-  }, [score, bestScore]);
+  const handleSetGameOver = useCallback((val) => {
+    setGameOver(val);
+    if (val) setPaused(true);
+  }, []);
 
-  // Comprehensive Focus Lifecycle, Trapping, and Restoration
-  useEffect(() => {
-    if (paused || gameOver) {
-      triggerRef.current = document.activeElement;
-
-      // Initial focus inside modal
-      if (paused && resumeBtnRef.current) {
-        resumeBtnRef.current.focus();
-      } else if (gameOver && restartBtnRef.current) {
-        restartBtnRef.current.focus();
-      }
-
-      // Trap focus inside modal
-      const currentModal = modalRef.current;
-      if (currentModal) {
-        const handleKeyDown = (e) => {
-          if (e.key !== 'Tab') return;
-          const focusables = currentModal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-          if (focusables.length === 0) return;
-
-          const first = focusables[0];
-          const last = focusables[focusables.length - 1];
-
-          if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-          document.removeEventListener('keydown', handleKeyDown);
-        };
-      }
-    } else {
-      // Restore focus to trigger element when modal closes
-      if (triggerRef.current && typeof triggerRef.current.focus === 'function') {
-        triggerRef.current.focus();
-      }
-    }
-  }, [paused, gameOver]);
-
-  const restartGame = () => {
+  const handleRestart = useCallback(() => {
     setScore(0);
     setGameOver(false);
     setPaused(false);

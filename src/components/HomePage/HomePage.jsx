@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { theme } from "../../styles/theme";
 import { gamesData } from "../../data/gamesData";
+import { getStoredBest } from "../../utils/bestScore";
 
 const CATEGORIES = [
   "All",
@@ -18,16 +19,6 @@ const DIFFICULTY_COLORS = {
   Medium: theme.colors.warning,
   Hard: theme.colors.danger,
 };
-const PLACEHOLDER_BEST_KEY = "gv_best_";
-
-function getBest(title) {
-  try {
-    const val = localStorage.getItem(`${PLACEHOLDER_BEST_KEY}${title}`);
-    return val ? JSON.parse(val) : 0;
-  } catch {
-    return 0;
-  }
-}
 
 export default function HomePage() {
   const [search, setSearch] = useState("");
@@ -96,7 +87,7 @@ export default function HomePage() {
         {filtered.map((game) => {
           const catColor =
             theme.categories[game.category] || theme.colors.accent;
-          const best = getBest(game.title);
+          const best = getStoredBest(game.title);
           return (
             <SCard
               key={game.slug}

@@ -73,7 +73,7 @@ function GameRoute({ game }) {
   const Component = GameComponents[game.slug];
   if (!Component) return null;
   return (
-    <GameShell title={game.title}>
+    <GameShell key={game.slug} title={game.title}>
       <Suspense fallback={<SuspenseFallback />}>
         <Component />
       </Suspense>
